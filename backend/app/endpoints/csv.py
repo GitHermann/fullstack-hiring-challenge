@@ -25,4 +25,15 @@ async def post_csv(csv_file: UploadFile):
 
   with open(file_path, 'wb+') as new_file:
     new_file.write(csv_file.file.read())
-  return {"message": f"File '{csv_file.filename}' saved at '{file_path}'"}
+  return {"message": f"File {csv_file.filename} saved at {file_path}", "id": csv_file.filename}
+
+@router.get('/csv/{id}')
+async def get_dataset(id: str):
+  '''
+    Returns the file name and the size of the dataset
+  '''
+  filename = id + '.csv'
+  for file in list_csv_files(data_path):
+    if file == filename:
+      return {"file": file,  "size": os.path.getsize(os.path.join(data_path,filename))}
+  return
