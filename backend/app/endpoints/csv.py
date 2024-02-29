@@ -1,5 +1,7 @@
 from fastapi import APIRouter, UploadFile, Response, status
 import os
+import pandas as pd
+import json
 
 data_path = 'data'
 
@@ -60,14 +62,29 @@ async def delete_dataset(id: str, response: Response):
   else:
     return
 
-@router.get('/csv/{id}/plot')
-async def get_amount_per_customer_per_month(id: str):
+def csv_to_json(csv_file: str):
+  df = pd.read_csv(csv_file, sep=";")
+  df.columns = df.columns.str.strip()
+  df_grouped = df.groupby(['email'])
+  emails = []
+  payments = []
+
+  for name, group in df_grouped:
+    emails.append(name[0])
+    payments.append(group[['invoicing date', 'amount']].to_dict())
+
+  return {"emails": emails, "payments": payments}
+
+@router.get('/csv/{id}/plot', status_code=404)
+async def get_amount_per_customer_per_month(id: str, response: Response):
   '''
     Returns a formatted dataset containing the amount paid by each customer per month
   '''
   filename = id + '.csv'
   file = find_file_if_exists(filename)
   if file is not None:
-    return
+    formatted_dataset = csv_to_json(os.path.join(data_path,file))
+    response.status_code = status.HTTP_200_OK
+    return formatted_dataset
   else:
     return
