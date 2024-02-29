@@ -32,7 +32,7 @@ def test_post_csv():
   
   os.remove(test_filename)
 
-  assert response.status_code == 200
+  assert response.status_code == 201
   assert response.json() == {"id": test_filename}
 
 def test_get_dataset():

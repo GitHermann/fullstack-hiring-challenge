@@ -16,7 +16,7 @@ def list_csv_files(path : str):
   csv_files = [file for file in os.listdir(path) if file.endswith('.csv')]
   return csv_files
 
-@router.post('/csv')
+@router.post('/csv', status_code= 201)
 async def post_csv(csv_file: UploadFile):
   '''
     Saves a copy of the uploaded csv file into the file system
@@ -36,4 +36,16 @@ async def get_dataset(id: str):
   for file in list_csv_files(data_path):
     if file == filename:
       return {"file": file,  "size": os.path.getsize(os.path.join(data_path,filename))}
+  return
+
+@router.delete('/csv/{id}')
+async def delete_dataset(id: str):
+  '''
+    Deletes the dataset
+  '''
+  filename = id + '.csv'
+  for file in list_csv_files(data_path):
+    if file == filename:
+      os.remove(os.path.join(data_path,filename))
+    return {"message": "File removed"}
   return
