@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile
+from fastapi import APIRouter, UploadFile, Response, status
 import os
 
 data_path = 'data'
@@ -27,19 +27,20 @@ async def post_csv(csv_file: UploadFile):
     new_file.write(csv_file.file.read())
   return {"id": csv_file.filename}
 
-@router.get('/csv/{id}')
-async def get_dataset(id: str):
+@router.get('/csv/{id}', status_code=404)
+async def get_dataset(id: str, response: Response):
   '''
     Returns the file name and the size of the dataset
   '''
   filename = id + '.csv'
   for file in list_csv_files(data_path):
     if file == filename:
+      response.status_code = status.HTTP_200_OK
       return {"file": file,  "size": os.path.getsize(os.path.join(data_path,filename))}
   return
 
-@router.delete('/csv/{id}')
-async def delete_dataset(id: str):
+@router.delete('/csv/{id}', status_code=404)
+async def delete_dataset(id: str, response: Response):
   '''
     Deletes the dataset
   '''
@@ -47,5 +48,6 @@ async def delete_dataset(id: str):
   for file in list_csv_files(data_path):
     if file == filename:
       os.remove(os.path.join(data_path,filename))
-    return {"message": "File removed"}
+      response.status_code == status.HTTP_200_OK
+      return {"message": "File removed"}
   return
