@@ -39,3 +39,7 @@ def test_get_dataset():
   response = client.get('/csv/test_csv_file')
   assert response.status_code == 200
   assert response.json() == {"file": test_filename, "size": size}
+
+def test_get_plot():
+  response = client.get('csv/sample_data_01/plot')
+  assert response.status_code == 200
