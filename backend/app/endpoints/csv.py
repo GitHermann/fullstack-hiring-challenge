@@ -1,7 +1,6 @@
 from fastapi import APIRouter, UploadFile, Response, status
 import os
 import pandas as pd
-import json
 
 data_path = 'data'
 
