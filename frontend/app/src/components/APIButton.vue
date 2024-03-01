@@ -1,12 +1,20 @@
 <template>
-  <button class="APIButton">
+  <button class="APIButton" @click="passedFunctionHandler">
     <span>{{ name }}</span>
   </button>
 </template>
 
 <script>
 export default {
-  props: ["name"],
+  props: {
+    name: String,
+    passedFunction: Function,
+  },
+  methods: {
+    passedFunctionHandler() {
+      this.passedFunction();
+    },
+  },
 };
 </script>
 
@@ -19,6 +27,7 @@ export default {
   background-color: rgb(0, 100, 255);
   font-weight: bold;
   color: white;
+  margin: 20px;
 }
 .APIButton:hover {
   filter: brightness(1.25);
