@@ -76,7 +76,7 @@ def csv_to_json(csv_file: str):
     invoicing_dates = group['invoicing date'].tolist()
     amounts = group['amount'].tolist()
 
-    payments = {'invoicing dates' : invoicing_dates, 'amounts' : amounts}
+    payments = {'invoicing_dates' : invoicing_dates, 'amounts' : amounts}
     element['payments'] = payments
 
     response.append(element.copy())
