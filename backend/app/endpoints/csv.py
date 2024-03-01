@@ -48,7 +48,7 @@ async def get_dataset(id: str, response: Response):
   else:
     return
 
-@router.delete('/csv/{id}', status_code=404)
+@router.delete('/csv/{id}')
 async def delete_dataset(id: str, response: Response):
   '''
     Deletes the dataset
@@ -57,9 +57,9 @@ async def delete_dataset(id: str, response: Response):
   file = find_file_if_exists(filename)
   if file is not None:
     os.remove(os.path.join(data_path,filename))
-    response.status_code == status.HTTP_200_OK
     return {"message": "File removed"}
   else:
+    response.status_code = status.HTTP_404_NOT_FOUND
     return
 
 def csv_to_json(csv_file: str):
