@@ -20,7 +20,7 @@ export default {
 
 <style scoped>
 .APIButton {
-  width: 20%;
+  width: 30%;
   padding: 10px;
   border: none;
   border-radius: 30px;

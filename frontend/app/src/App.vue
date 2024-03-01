@@ -6,34 +6,56 @@
           name="List the datasets"
           :passedFunction="callGetAllDatasetAPI"
         />
-        <APIButton name="Upload a dataset" />
+        <div>
+          <APIButton
+            name="Upload a dataset"
+            :passedFunction="callPostDatasetAPI"
+          />
+          <input
+            type="file"
+            ref="fileUpload"
+            @change="handleFileChange"
+            accept=".csv"
+          />
+        </div>
       </div>
       <div class="datasetListBox">
         <Dataset
-          v-for="dataset in datasets"
-          :datasetName="dataset"
+          v-for="datasetName in datasetsNames"
+          :datasetName="datasetName"
           @refreshDatasets="callGetAllDatasetAPI"
+          @fetchedFormattedDataset="setFormattedDataset"
         />
       </div>
     </div>
-    <div class="rightBox"></div>
+    <div class="rightBox">
+      <Chart
+        v-for="element in formattedDataset"
+        :email="element.email"
+        :payments="element.payments"
+      />
+    </div>
   </div>
 </template>
 
 <script>
 import APIButton from "./components/APIButton.vue";
 import Dataset from "./components/Dataset.vue";
-import { getAllDatasets } from "../api/csv";
+import Chart from "./components/Chart.vue";
+import { getAllDatasets, postCsv } from "../api/csv";
 
 export default {
   data() {
     return {
-      datasets: [],
+      datasetsNames: [],
+      formattedDataset: {},
+      uploadedFile: null,
     };
   },
   components: {
     APIButton,
     Dataset,
+    Chart,
   },
   methods: {
     async test() {
@@ -41,7 +63,23 @@ export default {
     },
     async callGetAllDatasetAPI() {
       try {
-        this.datasets = await getAllDatasets();
+        this.datasetsNames = await getAllDatasets();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    setFormattedDataset(formattedDataset) {
+      this.formattedDataset = formattedDataset;
+    },
+    resetUploadedFile() {
+      this.uploadedFile = this.$refs.fileUpload.files[0];
+    },
+    async callPostDatasetAPI() {
+      console.log(this.$refs.fileUpload.files);
+      this.uploadedFile = this.$refs.fileUpload.files[0];
+      try {
+        await postCsv(this.uploadedFile);
+        this.callGetAllDatasetAPI();
       } catch (error) {
         console.error(error);
       }
@@ -60,7 +98,7 @@ export default {
 }
 
 .leftBox {
-  width: 45%;
+  width: 35%;
   height: 85vh;
   margin: 10px;
   display: flex;
@@ -92,6 +130,20 @@ export default {
   border-radius: 30px;
   box-shadow: 3px 3px 3px rgb(230, 230, 230);
   text-align: center;
+}
+
+.rightBox {
+  width: 65%;
+  height: 85vh;
+  margin: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  border-radius: 30px;
+  box-shadow: 3px 3px 3px rgb(230, 230, 230);
+  overflow: auto;
 }
 </style>
 

@@ -6,13 +6,20 @@
       iconImage="ri-delete-bin-line"
       :passedFunction="deleteDatasetMethod"
     />
-    <DatasetActionButton iconImage="ri-line-chart-line" />
+    <DatasetActionButton
+      iconImage="ri-line-chart-line"
+      :passedFunction="getPlotDataMethod"
+    />
   </div>
 </template>
 
 <script>
 import DatasetActionButton from "./DatasetActionButton.vue";
-import { getDataset, deleteDataset } from "../../api/csv";
+import {
+  getDataset,
+  deleteDataset,
+  getAmountPerCustomerPerMonth,
+} from "../../api/csv";
 
 export default {
   data() {
@@ -46,13 +53,24 @@ export default {
         console.error(error);
       }
     },
+    async getPlotDataMethod() {
+      try {
+        const response = await getAmountPerCustomerPerMonth(
+          this.datasetName.split(".")[0]
+        );
+        this.$emit("fetchedFormattedDataset", response);
+        return;
+      } catch (error) {
+        console.error(error);
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
 .datasetBox {
-  width: 50%;
+  width: 70%;
   height: 15%;
   padding: 10px;
   border: none;

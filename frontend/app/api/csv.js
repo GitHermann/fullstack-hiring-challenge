@@ -9,6 +9,20 @@ const getAllDatasets = async () => {
   }
 };
 
+const postCsv = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append('csv_file', file);
+    const response = await fetch(`${serverUrl}/csv`, {
+      method: 'POST',
+      body: formData,
+    });
+    return response.json();
+  } catch (error) {
+    return {error: error.message || 'An error occurred'}
+  }
+}
+
 const getDataset = async (id) => {
   try {
     const response = await fetch(`${serverUrl}/csv/${id}`)
@@ -27,4 +41,13 @@ const deleteDataset = async (id) => {
   }
 };
 
-export { getAllDatasets, getDataset, deleteDataset }
+const getAmountPerCustomerPerMonth = async (id) => {
+  try {
+    const response = await fetch(`${serverUrl}/csv/${id}/plot`)
+    return response.json()
+  } catch (error) {
+    return {error: error.message || 'An error occurred'};
+  }
+}
+
+export { getAllDatasets, getDataset, deleteDataset, getAmountPerCustomerPerMonth, postCsv }
