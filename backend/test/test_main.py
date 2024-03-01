@@ -6,7 +6,7 @@ from app.main import app
 
 client = TestClient(app)
 
-data_path = '../data'
+data_path = './data'
 test_filename = 'test_csv_file.csv'
 size = 0
 
@@ -18,7 +18,11 @@ def test_hello_world():
 def test_get_all_datasets():
   response = client.get("/csv")
   assert response.status_code == 200
-  assert response.json() == ["sample_data_01.csv", "sample_data_02.csv", test_filename]
+  assert response.json() == ["sample_data_01.csv", "sample_data_02.csv"]
+
+def test_get_plot():
+  response = client.get('csv/sample_data_01/plot')
+  assert response.status_code == 200
 
 def test_post_csv():
   with open(test_filename, "w") as test_csv_file:
@@ -38,8 +42,5 @@ def test_post_csv():
 def test_get_dataset():
   response = client.get('/csv/test_csv_file')
   assert response.status_code == 200
-  assert response.json() == {"file": test_filename, "size": size}
-
-def test_get_plot():
-  response = client.get('csv/sample_data_01/plot')
-  assert response.status_code == 200
+  assert response.json() == {"file": test_filename, "size": size} 
+  os.remove(data_path +'/'+test_filename)
