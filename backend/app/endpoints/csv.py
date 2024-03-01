@@ -66,14 +66,22 @@ def csv_to_json(csv_file: str):
   df = pd.read_csv(csv_file, sep=";")
   df.columns = df.columns.str.strip()
   df_grouped = df.groupby(['email'])
-  emails = []
-  payments = []
+
+  response = []
+  element = {}
 
   for name, group in df_grouped:
-    emails.append(name[0])
-    payments.append(group[['invoicing date', 'amount']].to_dict())
+    element['email'] = name[0]
 
-  return {"emails": emails, "payments": payments}
+    invoicing_dates = group['invoicing date'].tolist()
+    amounts = group['amount'].tolist()
+
+    payments = {'invoicing dates' : invoicing_dates, 'amounts' : amounts}
+    element['payments'] = payments
+
+    response.append(element.copy())
+
+  return response
 
 @router.get('/csv/{id}/plot', status_code=404)
 async def get_amount_per_customer_per_month(id: str, response: Response):
